@@ -12,6 +12,13 @@ var tblOptm = require('./tablaoptm');
 
 var toencoding = require('./encodingTransform');
 
+// nuevo fase 3
+var parserXquery = require('./Interprete/index');
+var parseXML = require('./Interprete/analizadorXML/grammar');
+var salidaXquery = require('./sxquery');
+var errores = require('./erroes/eprueba');
+var tablaxq = require('./simbolosxq');
+
 var parserXquery = require('./Interprete/index');
 var parseXML = require('./Interprete/analizadorXML/grammar');
 var salidaXquery = require('./sxquery');
@@ -62,6 +69,7 @@ parseXMLDES = () => {
 
 
 
+// mas de la fase 3
 hacerConsulta = () => {
     let textoQuery = document.getElementById('xqResult').value;
     let textoXML = document.getElementById('taCS').value;
@@ -71,6 +79,16 @@ hacerConsulta = () => {
     let salidaXQuery = parserXquery.execXQ(xml.datos, textoQuery);
 
     salidaXquery.cambiarSalidaXQuery(salidaXQuery);
+
+    //console.log(tablaxq.tablaxq);
+    limpiarTabla('simxqTabla');
+    tsimbolosXQuery(tablaxq.tablaxq);
+    
+    if(errores.errores.length > 0) {
+        limpiarTabla('errxqTabla');
+        llenarTablaErroresXQ(errores.errores);
+        errores.errores = [];
+    }
     //let textoXML = document.getElementById('taCS').value;
     //probar(textoXML,textoQuery);
     //execXpatASC(textoQuery);
@@ -281,4 +299,59 @@ function llenatTableOptmHola(arrOptm) {
         newRow.innerHTML = rows;
         contador++;
     });
+}
+
+function llenarTablaErroresXQ(arrOptm) {
+    let tbodyRef = document.getElementById('errxqTabla').getElementsByTagName('tbody')[0];
+
+    let rows = '';
+    let contador = 1;
+
+    arrOptm.forEach(element => {
+        let newRow = tbodyRef.insertRow(tbodyRef.rows.length);
+
+        rows = `<tr>
+                    <td>${ contador }</td>
+                    <td>${ element.linea }</td>
+                    <td>${ element.columna }</td>
+                    <td>${ element.err }</td>
+                    <td>${ element.tipo }</td>
+                </tr>`;
+
+        newRow.innerHTML = rows;
+        contador++;
+    });
+}
+
+function tsimbolosXQuery(tabla) {
+    let buscarTipo = ["entero", "caracter", "booleano", "doble", "cadena", "error", "tvoid", "nulo", "XPath", "sequence", "defecto", "funcion"];
+
+    let tbodyRef = document.getElementById('simxqTabla').getElementsByTagName('tbody')[0];
+
+    let rows = '';
+    
+    let contador = 1;
+    let nuevaTabla = tabla.entries();
+    let nuevaTabla1 = tabla.entries();
+    let nuevaTabla2 = tabla.entries();
+    nuevaTabla.next().value;
+    nuevaTabla1.next().value;
+    nuevaTabla2.next().value;
+    for(let i = 0; i < tabla.size; i++) {
+        //console.log(nuevaTabla.next().value[0]);
+        //console.log(nuevaTabla.next().value[1].tipo.tipo);
+
+        let newRow = tbodyRef.insertRow(tbodyRef.rows.length);
+
+        rows = `<tr>
+                    <td>${ contador }</td>
+                    <td>${ nuevaTabla.next().value[0] }</td>
+                    <td>${ buscarTipo[nuevaTabla1.next().value[1].tipo.tipo] }</td>
+                    <td>${ nuevaTabla2.next().value[1].valor }</td>
+                </tr>`;
+
+        newRow.innerHTML = rows;
+        
+        contador++;
+    }
 }
