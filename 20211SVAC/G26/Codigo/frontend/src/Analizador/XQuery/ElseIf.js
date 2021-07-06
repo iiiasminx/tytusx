@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ElseIf = void 0;
-class ElseIf {
+export class ElseIf {
     constructor(identifier, condicion, respThen, fila, columna) {
         this.identifier = identifier;
         this.condicion = condicion;
@@ -10,6 +7,9 @@ class ElseIf {
         this.columna = columna;
     }
     condicionCumple(entorno) {
+        if (this.identifier != undefined) {
+            console.log("Prueba :", entorno.obtenerSimbolo(this.identifier));
+        }
         let respuesta = this.condicion.getValor(entorno);
         if (respuesta != null && respuesta != undefined) {
             if (respuesta.tsimbolos !== undefined && respuesta.tsimbolos.length > 0) {
@@ -31,4 +31,3 @@ class ElseIf {
         return [];
     }
 }
-exports.ElseIf = ElseIf;
